@@ -1,6 +1,7 @@
 import pygame
+import sys
 
-from constants import ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, LINE_WIDTH, PLAYER_RADIUS, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_SPEED, PLAYER_TURN_SPEED
+from constants import ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, LINE_WIDTH, PLAYER_LIVES, PLAYER_RADIUS, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_SPEED, PLAYER_TURN_SPEED
 from circleshape import CircleShape
 from shot import Shot
 
@@ -61,4 +62,12 @@ class Player(CircleShape):
 
     def draw(self, screen):
         screen = pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
+
+    def death(self):
+        if PLAYER_LIVES > 0:
+            player_lives = PLAYER_LIVES
+            player_lives -= 1
+            print(f"respawned {player_lives} left")
+        else:
+            sys.exit()
         

@@ -49,7 +49,7 @@ def main():
             if asteroid.collides_with(player):
                 log_event("player hit")
                 print("Game over!")
-                sys.exit()
+                player.death()
         for drawables in drawable:
             drawables.draw(screen)
         pygame.display.flip()
