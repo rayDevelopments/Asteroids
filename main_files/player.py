@@ -48,14 +48,6 @@ class Player(CircleShape):
             self.move(-dt)
         if keys[pygame.K_d]:
             self.rotate(dt)
-        if keys[pygame.K_UP]:
-            self.move(dt)
-        if keys[pygame.K_LEFT]:
-            self.rotate(-dt)
-        if keys[pygame.K_DOWN]:
-            self.move(-dt)
-        if keys[pygame.K_RIGHT]:
-            self.rotate(dt)
         if keys[pygame.K_SPACE]:
             if self.cooldown <= 0:
                 self.shoot()
@@ -79,10 +71,10 @@ class Player(CircleShape):
             self.cooldown -= dt
             self.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
             if self.player_score > 0:
-                self.player_score -= int(self.player_score / 2)
+                self.player_score -= int(self.player_score / 1.5)
             else:
                 self.player_score = 0
-            print(f"respawned {self.player_lives} left, score: {self.player_score}")
+            print(f"respawned {self.player_lives} lives left, score: {self.player_score}")
         else:
             log_event("player hit")
             print("Game over!")
