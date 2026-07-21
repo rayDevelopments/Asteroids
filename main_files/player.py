@@ -1,9 +1,10 @@
 import pygame
 import sys
 
-from constants import ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, LINE_WIDTH, PLAYER_LIVES, PLAYER_RADIUS, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_SPEED, PLAYER_TURN_SPEED
+from constants import ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS, LINE_WIDTH, PLAYER_LIVES, PLAYER_RADIUS, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_SPEED, PLAYER_TURN_SPEED, RESPAWN_COOLDOWN, SCREEN_HEIGHT, SCREEN_WIDTH
 from circleshape import CircleShape
 from shot import Shot
+from logger import log_event
 
 class Player(CircleShape):
     def __init__(self, x: float, y: float) -> None:
@@ -11,6 +12,7 @@ class Player(CircleShape):
         self.rotation = 0
         self.cooldown = 0
         self.player_score = 0
+        self.player_lives = PLAYER_LIVES
 
     def triangle(self) -> list[pygame.Vector2]:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -46,6 +48,14 @@ class Player(CircleShape):
             self.move(-dt)
         if keys[pygame.K_d]:
             self.rotate(dt)
+        if keys[pygame.K_UP]:
+            self.move(dt)
+        if keys[pygame.K_LEFT]:
+            self.rotate(-dt)
+        if keys[pygame.K_DOWN]:
+            self.move(-dt)
+        if keys[pygame.K_RIGHT]:
+            self.rotate(dt)
         if keys[pygame.K_SPACE]:
             if self.cooldown <= 0:
                 self.shoot()
@@ -53,21 +63,28 @@ class Player(CircleShape):
 
     def score(self, other):
         if other.radius == ASTEROID_MAX_RADIUS:
-            self.player_score += 3
+            self.player_score += 1.5
         elif other.radius == (ASTEROID_MIN_RADIUS + ASTEROID_MAX_RADIUS) / 2:
-            self.player_score += 2
-        else:
             self.player_score += 1
-        print(self.player_score)
+        else:
+            self.player_score += 0.5
 
     def draw(self, screen):
         screen = pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
 
-    def death(self):
-        if PLAYER_LIVES > 0:
-            player_lives = PLAYER_LIVES
-            player_lives -= 1
-            print(f"respawned {player_lives} left")
+    def death(self, dt):
+        if self.player_lives > 0:
+            self.player_lives -= 1
+            self.cooldown = RESPAWN_COOLDOWN
+            self.cooldown -= dt
+            self.position = pygame.Vector2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+            if self.player_score > 0:
+                self.player_score -= int(self.player_score / 2)
+            else:
+                self.player_score = 0
+            print(f"respawned {self.player_lives} left, score: {self.player_score}")
         else:
+            log_event("player hit")
+            print("Game over!")
             sys.exit()
         

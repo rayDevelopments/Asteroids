@@ -1,5 +1,4 @@
 import pygame
-import sys
 
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from logger import log_state, log_event
@@ -47,9 +46,9 @@ def main():
                     shot.kill()
         for asteroid in asteroids:
             if asteroid.collides_with(player):
-                log_event("player hit")
-                print("Game over!")
-                player.death()
+                for asteroid in asteroids:
+                    asteroid.kill()
+                player.death(dt)
         for drawables in drawable:
             drawables.draw(screen)
         pygame.display.flip()
